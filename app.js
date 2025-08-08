@@ -17,12 +17,13 @@ main().then(() =>{
 async function main(){
     await mongoose.connect(MONGO_URL);
 }
-// it should be before rednering
+
 app.set("view engine" ,"ejs");
 app.set("views" ,path.join(__dirname, "views")); 
 app.use(express.urlencoded({extended:true})) ; // due to this all data can be used form request 
 app.use(methodOverride("_method")); 
 app.engine('ejs', ejsMate);
+app.use(express.static(path.join(__dirname,"/public"))); 
 
 app.get("/" ,(req,res) =>{
     res.send(" Hi , I am root"); 

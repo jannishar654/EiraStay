@@ -5,7 +5,9 @@ const Listing = require("./models/listing.js");
 const path = require("path"); 
 const methodOverride = require("method-override"); 
 const ejsMate = require("ejs-mate"); 
-
+const wrapAsync = require("./utils/wrapAsync.js"); 
+const ExpressError=require("./utils/ExpressError.js");
+const{ listingSchema} = require("./schema.js"); 
 const MONGO_URL ="mongodb://127.0.0.1:27017/eirastay";
 
 main().then(() =>{
@@ -27,7 +29,21 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 app.get("/" ,(req,res) =>{
     res.send(" Hi , I am root"); 
-})
+}); 
+
+// Schema Validation middleware using Joi  
+const validateListing =(req,res,next) =>{
+    let {error}= listingSchema.validate(req.body); 
+   if(error){
+    let errMsg = error.details.map((el) => el.message).join(","); 
+    throw new ExpressError(400,errMsg); 
+   }else {
+    next(); 
+   }
+
+}
+
+
 // Index Route 
 app.get("/listings" , async (req,res) => {
     const allListings = await Listing.find({}); 
@@ -48,40 +64,52 @@ app.get("/listings/:id", async (req,res) => {
     res.render("listings/show.ejs", {listing}); 
 })
 // CReate Route 
-app.post("/listings" ,async(req,res) =>{
-  const newListing = new Listing(req.body.listing); 
-  await newListing.save(); 
+app.post("/listings" ,validateListing, wrapAsync(async(req,res,next) =>{
+    // if(!req.body.listing){
+    //     throw new ExpressError(400,"Send valid data for listing")
+    // }
+    // we will use joi validation 
    
-    res.redirect("/listings"); 
-})
+    
+        const newListing = new Listing(req.body.listing); 
+        await newListing.save(); 
+   
+        res.redirect("/listings"); 
+
+   
+  
+})); 
 
 // Edit Route 
-app.get("/listings/:id/edit",async(req,res) =>{
+app.get("/listings/:id/edit",wrapAsync(async(req,res) =>{
     let {id} = req.params; 
     const listing = await Listing.findById(id); 
     res.render("listings/edit.ejs",{listing}); 
 
-})
+}));
 
 // Update Route 
-app.put("/listings/:id", async(req,res) =>{
+app.put("/listings/:id",validateListing, wrapAsync(async(req,res) =>{
+    if(!req.body.listing){
+        throw new ExpressError(400,"Send valid data for listing")
+    }
     let {id} = req.params; 
    await Listing.findByIdAndUpdate(id,{...req.body.listing}); 
    res.redirect(`/listings/${id}`); 
-})
+}));
 // Delete Route 
-app.delete("/listings/:id",async(req,res) =>{
+app.delete("/listings/:id",wrapAsync(async(req,res) =>{
     let {id} = req.params; 
    let deletedListing = await Listing.findByIdAndDelete(id); 
    console.log(deletedListing); 
    res.redirect("/listings");
 
-})
+})); 
 
 
-app.get("/listings/new",(req,res) => {
-    res.render("listings/new.ejs"); 
-})
+// app.get("/listings/new",(req,res) => {
+//     res.render("listings/new.ejs"); 
+// })
 
 // app.get("/testListings",async (req,res) =>{
 //     let sampleListing = new Listing({
@@ -98,6 +126,20 @@ app.get("/listings/new",(req,res) => {
 
 
 // })
+
+// Error middleWares 
+// app.all("/*",(req,res,next) =>{
+//     next(new ExpressError(404,"Page not found")); 
+// }) // This will not work in express 5 
+app.use((req, res, next) => {
+    next(new ExpressError(404, "Page not found"));
+});
+
+app.use((err,req,res,next) =>{
+    let{statusCode=500,message="Something went wrong "} = err; 
+    res.status(statusCode).render("error.ejs",{message}); 
+}); 
+
 
 app.listen(8080,() => {
     console.log("server is listening to port 8080"); 

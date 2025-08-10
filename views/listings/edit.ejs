@@ -7,23 +7,26 @@
 
         <h3> Edit Your Listing </h3>
 
-    <form method="POST" action="/listings/<%=listing._id %>?_method=PUT" >
+    <form method="POST" action="/listings/<%=listing._id %>?_method=PUT" novalidate class="needs-validation" >
         <!-- since we can only use method post and get , so for update
         we will use package overide method npm i method-override and query string -->
          <div class="mb-3">
               <label for="title" class="form-label">Title</label>
-              <input name ="listing[title]" value="<%= listing.title %>" type="text" class="form-control" >
+              <input name ="listing[title]" value="<%= listing.title %>" type="text" class="form-control" required>
+              <div class="valid-feedback"> Title Looks good</div>
         
          </div>
 
          <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea name ="listing[description]" class ="form-control"><%= listing.description %> </textarea>
+            <textarea name ="listing[description]" class ="form-control" required><%= listing.description %> </textarea>
+            <div class="invalid-feedback"> Please enter a short description</div>
          </div>
 
          <div class="mb-3">
             <label for="image" class="form-label">Image Link</label>
-            <input name ="listing[image]" value="<%= listing.image %>" type="text" class="form-control">
+            <input name ="listing[image]" value="<%= listing.image %>" type="text" class="form-control" required>
+            <div class="invalid-feedback">Image Link should be valid </div>
          </div>
          
          <div class="row">
@@ -31,20 +34,23 @@
          
          <div class="mb-3 col-md-4">
             <label for="price" class="form-label">Price</label>
-             <input name ="listing[price]" value="<%= listing.price %>" type="number" class="form-control" >
+             <input name ="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required >
+             <div class="invalid-feedback">Price should be valid </div>
 
          </div>
 
          <div class="mb-3 col-md-8">
             <label for="country" class="form-label">Country</label>
-             <input name ="listing[country]" value="<%= listing.country %>" type="text" class="form-control" >
+             <input name ="listing[country]" value="<%= listing.country %>" type="text" class="form-control" required >
+             <div class="invalid-feedback">Country should be valid </div>
 
          </div>
          </div>
         
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
-            <input name ="listing[location]" value="<%= listing.location %>" type="text" class="form-control" >
+            <input name ="listing[location]" value="<%= listing.location %>" type="text" class="form-control" required >
+            <div class="invalid-feedback">Location should be valid  </div>
 
         </div>
          
@@ -60,5 +66,7 @@
 
     </div>
     </div>
+
+    <script src="/js/script.js" ></script>
     
 </body>

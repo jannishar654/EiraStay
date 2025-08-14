@@ -9,6 +9,9 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
 const{ listingSchema} = require("./schema.js"); 
 const MONGO_URL ="mongodb://127.0.0.1:27017/eirastay";
+const Review = require("./models/review.js"); 
+//console.log("Review model loaded as:", Review);
+
 
 main().then(() =>{
     console.log("Connected to DB"); 
@@ -105,6 +108,20 @@ app.delete("/listings/:id",wrapAsync(async(req,res) =>{
    res.redirect("/listings");
 
 })); 
+
+// Reviews //post ruoute 
+app.post("/listings/:id/reviews" ,async(req,res) =>{
+    let listing = await Listing.findById(req.params.id); 
+    let newReview = new Review(req.body.review); 
+
+    listing.reviews.push(newReview); 
+
+    await newReview.save(); 
+    await listing.save(); 
+
+    res.send("New Review Send "); 
+
+})
 
 
 // app.get("/listings/new",(req,res) => {

@@ -8,6 +8,8 @@ const ExpressError=require("./utils/ExpressError.js");
 const MONGO_URL ="mongodb://127.0.0.1:27017/eirastay";
 const listings = require("./routes/listing.js");
 const reviews =require("./routes/review.js");  
+const session = require("express-session"); 
+const flash = require("connect-flash"); 
 
 
 main().then(() =>{
@@ -27,9 +29,30 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public"))); 
 
+const sessionOptions ={
+    secret: "mysupersecretcode", 
+    resave: false , 
+    saveUninitialized : true,
+    cookie:{
+        expires:Date.now() +7 * 24 * 60 * 60 * 1000, // in milliseconds 
+        maxAge: 7 * 24 * 60* 60 * 1000,
+        httpOnly:true  // for cross-scripting attacts in security 
+    }, 
+};
+
 app.get("/" ,(req,res) =>{
     res.send(" Hi , I am root"); 
-}); 
+});
+
+app.use(session(sessionOptions)); 
+app.use(flash()); // Note session and flash ko routes ke pahle use karna hai 
+
+app.use((req,res,next) =>{
+    res.locals.success=req.flash("success"); 
+    res.locals.error=req.flash("error"); 
+    next(); 
+})
+ 
 
 app.use("/listings",listings);
 app.use("/listings/:id/reviews",reviews); 

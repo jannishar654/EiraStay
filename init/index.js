@@ -20,8 +20,10 @@ const initDB = async () =>{
     const simplifiedData = initData.data.map((listing) => {
     return {
         ...listing,
-        image: listing.image.url  // extract only the URL as a string
+        image: listing.image.url ,  // extract only the URL as a string
+        owner: "68a421f357649d683eb7259e" // to add owner to each listing  
     };
+    
 });
 
 await Listing.insertMany(simplifiedData);

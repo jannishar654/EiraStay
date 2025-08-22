@@ -6,7 +6,9 @@ const ExpressError=require("../utils/ExpressError.js");
 const{ listingSchema} = require("../schema.js");
 const {isLoggedIn,isOwner,validateListing} =require("../middleware.js"); 
 const listingController = require("../controllers/listing.js"); 
-
+const multer  = require('multer'); 
+const {storage} = require("../cloudConfig.js"); 
+const upload = multer({ storage }); 
 
 
 // Index Route 
@@ -19,13 +21,13 @@ router.get("/new",isLoggedIn,listingController.renderNewForm) ;
 // Show Route 
 router.get("/:id", wrapAsync(listingController.showListing)); 
 // CReate Route 
-router.post("/" ,isLoggedIn,validateListing, wrapAsync(listingController.createListing)); 
+router.post("/" ,isLoggedIn,upload.single("listing[image]"),validateListing, wrapAsync(listingController.createListing)); 
 
 // Edit Route 
 router.get("/:id/edit",isLoggedIn,isOwner,wrapAsync(listingController.editListing));
 
 // Update Route 
-router.put("/:id",isLoggedIn,isOwner, validateListing, wrapAsync(listingController.updateListing));
+router.put("/:id",isLoggedIn,isOwner,upload.single("listing[image]"), validateListing, wrapAsync(listingController.updateListing));
 // Delete Route 
 router.delete("/:id",isLoggedIn,isOwner, wrapAsync(listingController.deleteListing)); 
 

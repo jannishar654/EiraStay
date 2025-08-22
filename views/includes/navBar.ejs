@@ -1,26 +1,81 @@
+<style>
+  .btn-search{
+    background-color: #fe424d;
+    color:#ffffff; 
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+
+  }
+  .btn-search:hover{
+    background-color: #fe424d;
+    color:#ffffff; 
+
+  }
+  .btn-search i{
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .search-inp{
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 3 rem;
+    font-size: 1rem;
+  }
+
+</style>
+
+
 <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top">
-  <a class="navbar-brand" href="/"><i class="fa-solid fa-compass"></i></a>
+  <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
     <span class="navbar-toggler-icon"></span>
   </button>
+
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    
     <div class="navbar-nav">
-      <a class="nav-item nav-link active" href="/">Home</a>
-      <a class="nav-item nav-link" href="/listings">All Listings</a>
-      <a class="nav-item nav-link" href="/listings/new">Add new Listing</a>
+      <a class="nav-item nav-link" href="/listings">Explore</a>
     </div>
 
+   
     <div class="navbar-nav ms-auto">
-      <% if(!currUser) { %>
-        <a class="nav-item nav-link " href="/signup">SignUp</a>
-        <a class="nav-item nav-link" href="/login">Login</a>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2 search-inp" type="search" placeholder="Search listings" />
+        <button class="btn btn-search" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i>Search
+        </button>
+      </form>
+    </div>
+
+    
+    <div class="navbar-nav ms-auto">
+      <a class="nav-item nav-link" href="/listings/new">EiraStay Your Home</a>
+
+      <% if (!currUser) { %>
+        <a class="nav-item nav-link" href="/signup"><b>SignUp</b></a>
+        <a class="nav-item nav-link" href="/login"><b>Login</b></a>
       <% } %>
 
-      <% if(currUser) { %>
+      <% if (currUser) { %>
        
-      <a class="nav-item nav-link" href="/logout">LogOut</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-user"></i> <%= currUser.username %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end p-3" style="min-width: 250px;">
+            <li>
+              <div class="card shadow-sm border-0">
+                <div class="card-body p-2">
+                  <h6 class="card-title mb-1"><i class="fa-solid fa-user"></i> <%= currUser.username %></h6>
+                  <p class="card-text text-muted mb-2" style="font-size: 0.9rem;">
+                    <i class="fa-solid fa-envelope"></i> <%= currUser.email %>
+                  </p>
+                  <a href="/logout" class="btn btn-sm btn-danger w-100">Logout</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
       <% } %>
-      
     </div>
   </div>
 </nav>

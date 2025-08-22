@@ -32,14 +32,24 @@ module.exports.showListing = async (req,res) => {
 }; 
 
 module.exports.createListing=async(req,res,next) =>{
+    
     // if(!req.body.listing){
     //     throw new ExpressError(400,"Send valid data for listing")
     // }
     // we will use joi validation 
+
+     if (!req.file) {
+        req.flash("error", "Please upload an image!");
+        return res.redirect("/listings/new");
+    }
+
+        let url= req.file.path; 
+        let filename= req.file.filename; 
    
     
         const newListing = new Listing(req.body.listing); 
         newListing.owner = req.user._id; 
+        newListing.image={url,filename}; 
         await newListing.save(); 
         req.flash("success", "new listing created !"); 
    
@@ -56,8 +66,9 @@ module.exports.editListing = async(req,res) =>{
         req.flash("error","Listing you requested for ..Does not exist!"); 
         return res.redirect("/listings"); 
     } 
-
-    res.render("listings/edit.ejs",{listing}); 
+    let originalImageUrl= listing.image.url; 
+    originalImageUrl=originalImageUrl.replace("/upload","/upload/w_250"); // cloudinary api se image ki quality kar di , width=250px
+    res.render("listings/edit.ejs",{listing,originalImageUrl}); 
 
 }; 
 
@@ -66,7 +77,14 @@ module.exports.updateListing = async(req,res) =>{
         throw new ExpressError(400,"Send valid data for listing")
     }
     let {id} = req.params; 
-   await Listing.findByIdAndUpdate(id,{...req.body.listing}); 
+   let listing = await Listing.findByIdAndUpdate(id,{...req.body.listing}); 
+   if(typeof req.file !== "undefined"){
+    let url= req.file.path; 
+    let filename= req.file.filename; 
+    listing.image={ url,filename};
+    await listing.save()
+   } 
+
    req.flash("success", "Listing Updated !"); 
    res.redirect(`/listings/${id}`); 
 };

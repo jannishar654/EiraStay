@@ -1,13 +1,13 @@
 <style>
   .btn-search{
-    background-color: #fe424d;
+    background-color: #8e44ad;
     color:#ffffff; 
     border-radius: 25px;
     padding: 0 1rem 0 1rem;
 
   }
   .btn-search:hover{
-    background-color: #fe424d;
+    background-color:#8e44ad;
     color:#ffffff; 
 
   }
@@ -20,12 +20,36 @@
     padding: 0.5rem 3rem 0.5rem 3 rem;
     font-size: 1rem;
   }
+  .brand-container {
+  display: flex;
+  flex-direction: column; /* stack logo + slogan */
+  align-items: center;    /* center align */
+  text-decoration: none;  /* remove link underline */
+}
+
+.brand-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: 1px;
+  color: #0d2b38;
+}
+
+.brand-slogan {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #a16dcf;
+  margin-top: -4px; 
+}
+
 
 </style>
 
 
 <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top">
-  <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
+  <a class="navbar-brand ms-1" href="/listings"><i class="fas fa-house brand-icon" style="color:#8e44ad;"></i></a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -33,7 +57,10 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     
     <div class="navbar-nav">
-      <a class="nav-item nav-link" href="/listings">Explore</a>
+     <a class="nav-item nav-link brand-container" href="/listings">
+  <div class="brand-logo">EiraStay</div>
+  <div class="brand-slogan">MORE THAN A STAY</div>
+</a>
     </div>
 
    
